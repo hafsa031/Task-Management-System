@@ -1,0 +1,110 @@
+# 📋 Task Manager
+
+A full-stack task management app with user authentication. Users can register, log in, and manage their own personal to-do list — create, edit, complete, and delete tasks.
+
+## Tech Stack
+
+**Backend**
+- FastAPI (Python)
+- PostgreSQL + SQLAlchemy ORM
+- JWT authentication (`python-jose`)
+- Password hashing with `passlib` (bcrypt)
+
+**Frontend**
+- React 18 + Vite
+- Axios for API requests
+
+## Project Structure
+
+```
+task-manager/
+├── backend/
+│   ├── main.py          # FastAPI app & routes
+│   ├── models.py        # SQLAlchemy models (User, Task)
+│   ├── schemas.py        # Pydantic request/response schemas
+│   ├── auth.py           # JWT auth & password hashing
+│   ├── database.py       # DB connection/session setup
+│   └── requirements.txt
+└── frontend/
+    ├── src/
+    │   ├── App.jsx        # Main UI (login/register + task dashboard)
+    │   ├── api.js         # Axios instance with auth interceptor
+    │   ├── main.jsx        # React entry point
+    │   └── index.css
+    ├── index.html
+    ├── package.json
+    └── vite.config.js
+```
+
+## Features
+
+- User registration & login with JWT-based authentication
+- Each user only sees and manages their own tasks
+- Create, edit, complete/incomplete toggle, and delete tasks
+- Auto-generated API docs via FastAPI (Swagger UI)
+
+## Prerequisites
+
+- Python 3.9+
+- Node.js 18+
+- PostgreSQL running locally (or a connection string to one)
+
+## Setup & Run
+
+### 1. Backend
+
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate      # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+Create a database named `taskdb` in PostgreSQL, then set your connection string (optional — defaults to `postgresql://postgres:postgres@localhost:5432/taskdb`):
+
+```bash
+export DATABASE_URL="postgresql://<user>:<password>@localhost:5432/taskdb"
+export SECRET_KEY="replace-with-a-strong-random-secret"
+```
+
+Run the server:
+
+```bash
+uvicorn main:app --reload
+```
+
+The API will be available at `http://localhost:8000`, with interactive docs at `http://localhost:8000/docs`. Tables are created automatically on startup.
+
+### 2. Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The app will be available at `http://localhost:5173`.
+
+## API Endpoints
+
+| Method | Endpoint          | Description                | Auth required |
+|--------|-------------------|-----------------------------|----------------|
+| POST   | `/auth/register`  | Register a new user         | No             |
+| POST   | `/auth/login`      | Log in, returns JWT token   | No             |
+| GET    | `/tasks`           | List current user's tasks   | Yes            |
+| POST   | `/tasks`           | Create a new task           | Yes            |
+| PUT    | `/tasks/{task_id}` | Update a task               | Yes            |
+| DELETE | `/tasks/{task_id}` | Delete a task               | Yes            |
+
+## Environment Variables
+
+| Variable       | Description                          | Default (backend)                                      |
+|----------------|----------------------------------------|----------------------------------------------------------|
+| `DATABASE_URL` | PostgreSQL connection string          | `postgresql://postgres:postgres@localhost:5432/taskdb` |
+| `SECRET_KEY`   | Secret used to sign JWT tokens        | `supersecretkey_change_this_in_production` (change this!) |
+
+
+## Notes
+
+- Access tokens expire after 24 hours.
+- CORS is currently configured to allow `http://localhost:5173` and `http://localhost:3000` — update this list in `main.py` for production use.
