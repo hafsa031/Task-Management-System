@@ -43,3 +43,12 @@ class TaskOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class AISuggestRequest(BaseModel):
+    title: str
+
+
+class AISuggestResponse(BaseModel):
+    description: str
+
