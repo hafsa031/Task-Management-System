@@ -18,7 +18,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
+    encoded_password = plain_password.encode('utf-8')[:72]
+    return pwd_context.verify(encoded_password, hashed_password)
 
 
 def get_password_hash(password: str):

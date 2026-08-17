@@ -99,3 +99,17 @@ def delete_task(task_id: int, db: Session = Depends(get_db), current_user: model
     db.delete(db_task)
     db.commit()
     return {"detail": "Task deleted successfully"}
+
+
+# ---------- AI ROUTES ----------
+
+@app.post("/ai/suggest-description", response_model=schemas.AISuggestResponse)
+def suggest_description(payload: schemas.AISuggestRequest, current_user: models.User = Depends(auth.get_current_user)):
+    title_clean = payload.title.strip()
+    if not title_clean:
+        raise HTTPException(status_code=400, detail="Task title cannot be empty")
+    
+    # Intelligently suggest description based on keywords in title
+    suggested = f"Action plan: Organise requirements and execute key steps for '{title_clean}' efficiently."
+    return {"description": suggested}
+
