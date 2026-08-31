@@ -2,15 +2,15 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copy the requirements file from the root directory
+# Copy requirements from the root folder
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the entire project repository into /app
+# Copy the entire project into the container
 COPY . .
 
-# Set Python path so 'backend' is recognized as a package module
-ENV PYTHONPATH=/app
+# Change working directory directly into the folder where main.py sits
+WORKDIR /app/backend/app
 
-# Point directly to your nested structure: backend -> app -> main.py
-CMD uvicorn backend.app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+# Run uvicorn on main.py directly
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
