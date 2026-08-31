@@ -2,12 +2,11 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
+# Copy the contents of your backend folder directly into /app
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY backend/ .
 
-# Sets the python path so the container can locate the backend module correctly
-ENV PYTHONPATH=/app
-
-CMD uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}
+# Now main.py is right in the working directory (/app), so we just call main:app
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
