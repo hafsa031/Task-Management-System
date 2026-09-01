@@ -1,15 +1,36 @@
-FROM python:3.10-slim
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 
-WORKDIR /app
+from app.api import auth
+from app.api import tasks
+from app.core.database import engine, Base
 
-# Copy requirements from the current directory (backend/)
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+Base.metadata.create_all(bind=engine)
 
-# Copy the rest of the backend files (app/, etc.) into /app
-COPY . .
+app = FastAPI(title="Task Management System")
 
-EXPOSE 8000
+# Trust all proxy hosts from Render
+app.add_middleware(
+    TrustedHostMiddleware, allowed_hosts=["*"]
+)
 
-# Added --proxy-headers and --forwarded-allow-ips to fix Render proxy 400 Bad Request
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*"]
+# Strict and clean CORS setup
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://task-management-system-8o3d.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(auth.router)
+app.include_router(tasks.router)
+
+@app.get("/")
+def root():
+    return {"message": "Task Management System API is running"}
