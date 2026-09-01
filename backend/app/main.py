@@ -10,13 +10,10 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Task Management System")
 
-# CORS Setup
+# CORS Setup - Updated to allow requests from your live Vercel frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:3000"
-    ],
+    allow_origins=["*"],  # Allows requests from any origin (Vercel, localhost, etc.)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
