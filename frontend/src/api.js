@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-// Use your exact live Render backend URL
+// Hardcoded directly to your live Render backend for the viva demo
 const API_URL = 'https://task-management-system-1lta.onrender.com'
 
 const api = axios.create({ baseURL: API_URL })
