@@ -1,6 +1,5 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
 
 from app.api import auth
 from app.api import tasks
@@ -10,12 +9,7 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Task Management System")
 
-# Allow all hosts so Render proxy headers don't trigger 400 Bad Request on OPTIONS
-app.add_middleware(
-    TrustedHostMiddleware, allowed_hosts=["*"]
-)
-
-# Comprehensive CORS setup
+# Standard CORS setup
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -23,6 +17,21 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Bulletproof middleware to intercept OPTIONS preflight and prevent 400 Bad Request
+@app.middleware("http")
+async def cors_handler(request: Request, call_next):
+    if request.method == "OPTIONS":
+        response = Response(status_code=200)
+    else:
+        response = await call_next(request)
+    
+    origin = request.headers.get("origin", "*")
+    response.headers["Access-Control-Allow-Origin"] = origin
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    response.headers["Access-Control-Allow-Credentials"] = "false"
+    return response
 
 app.include_router(auth.router)
 app.include_router(tasks.router)

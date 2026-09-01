@@ -11,5 +11,5 @@ COPY . .
 
 EXPOSE 8000
 
-# Since we are inside backend/, 'app.main:app' will point straight to app/main.py
-CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+# Added --proxy-headers and --forwarded-allow-ips to fix Render proxy 400 Bad Request
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*"]
