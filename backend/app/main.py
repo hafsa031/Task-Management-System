@@ -9,11 +9,17 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Task Management System")
 
-# Robust CORS configuration for Vercel + Render
+# Explicit origins list to satisfy browser preflight security checks
+origins = [
+    "https://task-management-system-8o3d.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:5173",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Safe when combined with proper wildcard methods/headers
-    allow_credentials=False,  # Set to False if you use token-based headers (Bearer token) instead of cookies
+    allow_origins=origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
