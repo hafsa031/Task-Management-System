@@ -10,10 +10,16 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Task Management System")
 
-# CORS Setup - Updated to allow requests from your live Vercel frontend
+# CORS Setup - Explicitly defining origins (Wildcard ["*"] fails when allow_credentials=True)
+origins = [
+    "https://task-management-system-8o3d.vercel.app",  # Your live Vercel frontend
+    "http://localhost:3000",                         # For local React testing
+    "http://localhost:5173",                         # For local Vite testing
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows requests from any origin (Vercel, localhost, etc.)
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
