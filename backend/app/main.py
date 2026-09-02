@@ -6,29 +6,46 @@ from app.api import auth, tasks
 from app.core.database import engine, Base
 
 
+# ==========================================
+# CREATE DATABASE TABLES
+# ==========================================
+
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Task Management System")
+
+# ==========================================
+# CREATE FASTAPI APP
+# ==========================================
+
+app = FastAPI(
+    title="Task Management System"
+)
 
 
-# CORS
+# ==========================================
+# CORS CONFIGURATION
+# ==========================================
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://task-management-system-8o3d.vercel.app",
-        "http://localhost:5173",
-        "http://localhost:3000",
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
-# Routers
+# ==========================================
+# API ROUTES
+# ==========================================
+
 app.include_router(auth.router)
 app.include_router(tasks.router)
 
+
+# ==========================================
+# ROOT ENDPOINT
+# ==========================================
 
 @app.get("/")
 def root():
