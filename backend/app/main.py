@@ -26,12 +26,14 @@ app.add_middleware(
 )
 
 
-# Routes
+# Include API routes
 app.include_router(auth.router)
 app.include_router(tasks.router)
 
 
 @app.get("/")
 def root():
-    return {"message": "Task Management System API is running"}
+    return {
+        "message": "Task Management System API is running"
+    }
 ```
