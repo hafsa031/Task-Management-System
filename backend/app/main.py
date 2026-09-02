@@ -22,17 +22,21 @@ app = FastAPI(
 # ==========================================
 # CORS CONFIGURATION
 # ==========================================
-origins = [
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "https://task-management-system-8o3d.vercel.app",
-]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+
+    # Allow your Vercel frontend
+    allow_origins=[
+        "https://task-management-system-8o3d.vercel.app",
+        "http://localhost:5173",
+        "http://localhost:3000",
+    ],
+
     allow_credentials=False,
+
     allow_methods=["*"],
+
     allow_headers=["*"],
 )
 
