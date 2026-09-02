@@ -12,7 +12,10 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Task Management System")
 
 
-# CORS configuration
+# =========================
+# CORS CONFIGURATION
+# =========================
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -26,10 +29,17 @@ app.add_middleware(
 )
 
 
-# Include API routes
+# =========================
+# ROUTERS
+# =========================
+
 app.include_router(auth.router)
 app.include_router(tasks.router)
 
+
+# =========================
+# ROOT
+# =========================
 
 @app.get("/")
 def root():
