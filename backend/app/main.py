@@ -6,16 +6,12 @@ from app.api import auth, tasks
 from app.core.database import engine, Base
 
 
-# Create database tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Task Management System")
 
 
-# =========================
-# CORS CONFIGURATION
-# =========================
-
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -29,17 +25,10 @@ app.add_middleware(
 )
 
 
-# =========================
-# ROUTERS
-# =========================
-
+# Routers
 app.include_router(auth.router)
 app.include_router(tasks.router)
 
-
-# =========================
-# ROOT
-# =========================
 
 @app.get("/")
 def root():
