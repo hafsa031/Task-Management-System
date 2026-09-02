@@ -1,36 +1,13 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
+FROM python:3.10-slim
 
-from app.api import auth
-from app.api import tasks
-from app.core.database import engine, Base
+WORKDIR /app
 
-Base.metadata.create_all(bind=engine)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-app = FastAPI(title="Task Management System")
+COPY . .
 
-# Trust all proxy hosts from Render
-app.add_middleware(
-    TrustedHostMiddleware, allowed_hosts=["*"]
-)
+EXPOSE 8000
 
-# Strict and clean CORS setup
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "https://task-management-system-8o3d.vercel.app",
-        "http://localhost:3000",
-        "http://localhost:5173",
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-app.include_router(auth.router)
-app.include_router(tasks.router)
-
-@app.get("/")
-def root():
-    return {"message": "Task Management System API is running"}
+# Shell form ensures $PORT expands and proxy flags accept Cloudflare/Render traffic
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips="*"
