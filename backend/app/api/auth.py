@@ -25,9 +25,10 @@ def verify_password(plain_password, hashed_password):
 
 
 def get_password_hash(password: str):
-    # Truncate password to 72 bytes to prevent bcrypt ValueError crash
-    encoded_password = password.encode('utf-8')[:72]
-    return pwd_context.hash(encoded_password)
+    # Safely encode and truncate to 72 bytes while keeping it as a string for passlib
+    password_bytes = password.encode('utf-8')[:72]
+    safe_password = password_bytes.decode('utf-8', errors='ignore')
+    return pwd_context.hash(safe_password)
 
 
 def create_access_token(data: dict):
